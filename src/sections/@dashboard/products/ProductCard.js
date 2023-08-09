@@ -33,7 +33,7 @@ export default function ShopProductCard({ product }) {
         {status && (
           <Label
             variant="filled"
-            color={(status === 'sale' && 'error') || 'info'}
+            color={(status === 'pendiente' && 'error') || 'info'}
             sx={{
               zIndex: 9,
               top: 16,
@@ -58,7 +58,7 @@ export default function ShopProductCard({ product }) {
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <ColorPreview colors={colors} />
           <Typography variant="subtitle1">
-            <Typography
+            {/* <Typography
               component="span"
               variant="body1"
               sx={{
@@ -67,9 +67,8 @@ export default function ShopProductCard({ product }) {
               }}
             >
               {priceSale && fCurrency(priceSale)}
-            </Typography>
-            &nbsp;
-            {fCurrency(price)}
+            </Typography> */}
+            Horas Completadas 
           </Typography>
         </Stack>
       </Stack>
