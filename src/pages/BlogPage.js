@@ -1,4 +1,6 @@
 import { Helmet } from 'react-helmet-async';
+
+import { Link } from 'react-router-dom';
 // @mui
 import { Grid, Button, Container, Stack, Typography } from '@mui/material';
 // components
@@ -6,7 +8,6 @@ import Iconify from '../components/iconify';
 import { BlogPostCard, BlogPostsSort, BlogPostsSearch } from '../sections/@dashboard/blog';
 // mock
 import POSTS from '../_mock/blog';
-
 // ----------------------------------------------------------------------
 
 const SORT_OPTIONS = [
@@ -21,7 +22,7 @@ export default function BlogPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Blog | Minimal UI </title>
+        <title> Dashboard: Blog | List </title>
       </Helmet>
 
       <Container>
@@ -29,7 +30,12 @@ export default function BlogPage() {
           <Typography variant="h4" gutterBottom>
             Mis Temas | Blog
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+          <Button
+            variant="contained"
+            startIcon={<Iconify icon="eva:plus-fill" />}
+            component={Link}
+            to="/dashboard/blog/create"
+          >
             Nuevo Post
           </Button>
         </Stack>

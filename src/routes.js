@@ -9,6 +9,7 @@ import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
+import BlogCreatePage from './pages/BlogCreatePage';
 
 // ----------------------------------------------------------------------
 
@@ -22,7 +23,13 @@ export default function Router() {
         { path: 'app', element: <DashboardAppPage /> },
         { path: 'user', element: <UserPage /> },
         { path: 'products', element: <ProductsPage /> },
-        { path: 'blog', element: <BlogPage /> },
+        {
+          path: 'blog',
+          children: [
+            { path: '', element: <BlogPage /> }, // Página de listado de publicaciones de blog
+            { path: 'create', element: <BlogCreatePage /> } // Nueva ruta para la creación de publicaciones
+          ],
+        },
       ],
     },
     {

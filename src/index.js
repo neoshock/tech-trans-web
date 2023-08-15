@@ -1,9 +1,10 @@
 import ReactDOM from 'react-dom/client';
-
-//
+import reportWebVitals from './reportWebVitals';
+import 'tailwindcss/base.css';
+import 'tailwindcss/components.css';
+import 'tailwindcss/utilities.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import reportWebVitals from './reportWebVitals';
 
 // ----------------------------------------------------------------------
 

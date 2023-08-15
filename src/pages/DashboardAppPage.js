@@ -26,7 +26,7 @@ export default function DashboardAppPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard | Minimal UI </title>
+        <title> Dashboard </title>
       </Helmet>
 
       <Container maxWidth="xl">
@@ -119,11 +119,11 @@ export default function DashboardAppPage() {
                 { label: 'Pedro', value: 200 },
                 { label: 'Maria', value: 100 },
                 { label: 'Luis', value: 90 },
-                { label: 'Josue', value: 80 }
+                { label: 'Josue', value: 80 },
               ]}
             />
           </Grid>
-{/* 
+          {/* 
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentSubject
               title="Current Subject"
@@ -142,12 +142,12 @@ export default function DashboardAppPage() {
               title="Temas recientes"
               list={[...Array(5)].map((_, index) => ({
                 id: faker.datatype.uuid(),
-                title:[
+                title: [
                   'Conceptos Basicos de Programacion',
                   'Estructura de datos',
                   'Arquitectura de Computadoras',
                   'El uso de Arrays',
-                  'Que es Recursividad'
+                  'Que es Recursividad',
                 ][index],
                 description: faker.name.jobTitle(),
                 image: `/assets/images/covers/cover_${index + 1}.jpg`,
@@ -173,7 +173,7 @@ export default function DashboardAppPage() {
               }))}
             />
           </Grid>
-{/* 
+          {/* 
           <Grid item xs={12} md={6} lg={4}>
             <AppTrafficBySite
               title="Traffic by Site"
