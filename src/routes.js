@@ -10,6 +10,7 @@ import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import BlogCreatePage from './pages/BlogCreatePage';
+import BlogDetailPage from './pages/BlogDetailPage';
 
 // ----------------------------------------------------------------------
 
@@ -27,7 +28,8 @@ export default function Router() {
           path: 'blog',
           children: [
             { path: '', element: <BlogPage /> }, // Página de listado de publicaciones de blog
-            { path: 'create', element: <BlogCreatePage /> } // Nueva ruta para la creación de publicaciones
+            { path: 'create', element: <BlogCreatePage /> }, // Nueva ruta para la creación de publicaciones,
+            { path: 'detail/:blogId', element: <BlogDetailPage /> }
           ],
         },
       ],

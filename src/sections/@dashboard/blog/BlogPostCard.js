@@ -1,3 +1,4 @@
+import { Link as RLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 // @mui
 import { alpha, styled } from '@mui/material/styles';
@@ -145,6 +146,8 @@ export default function BlogPostCard({ post, index }) {
                 color: 'common.white',
               }),
             }}
+            component={RLink}
+            to={`/dashboard/blog/detail/${index}`}
           >
             {title}
           </StyledTitle>
