@@ -333,7 +333,14 @@ const posts = [...Array(6)].map((_, index) => ({
     name: faker.name.fullName(),
     avatarUrl: `/assets/images/avatars/avatar_${index + 1}.jpg`,
   },
-  content: POST_CONTENT[index]
+  content: POST_CONTENT[index],
+  background: faker.image.imageUrl(
+    1920,
+    1080,
+    'computer',
+    true,
+    true,
+  )
 }));
 
 export default posts;
