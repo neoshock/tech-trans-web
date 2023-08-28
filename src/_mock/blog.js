@@ -32,8 +32,6 @@ const POST_TITLES = [
 
 const POST_CONTENT = [
   `<div>
-  <img src="https://digitalpress.fra1.cdn.digitaloceanspaces.com/zn3wniw/2021/01/cpython.png" alt="Imagen relacionada con POO" style="max-width: 100%; margin-top: 20px;" />
-
   <h2 style="font-size: 20px; color: #444; margin-top: 30px;">Breve Historia</h2>
   <p style="font-size: 16px; color: #666;">
       La Programación Orientada a Objetos (POO) tuvo sus inicios en la década de 1960. Simula, un lenguaje de programación desarrollado por Ole-Johan Dahl y Kristen Nygaard, es considerado como uno de los primeros lenguajes orientados a objetos. Más tarde, en la década de 1970, Smalltalk, desarrollado en Xerox PARC, llevó la POO a la vanguardia de la programación.
@@ -85,7 +83,6 @@ const POST_CONTENT = [
 </div>
 `,
   `<div>
-<img src="https://www.wordstream.com/wp-content/uploads/2021/07/machine-learning.png" alt="Imagen ilustrativa de redes neuronales" style="max-width: 100%; margin-top: 20px;" />
 
 <h2 style="font-size: 20px; color: #444; margin-top: 30px;">Breve Historia</h2>
 <p style="font-size: 16px; color: #666;">
@@ -134,7 +131,6 @@ model.compile(optimizer='adam',
 </div>
 `,
   `<div>
-<img src="https://source.unsplash.com/random" alt="Imagen ilustrativa de seguridad informática" style="max-width: 100%; margin-top: 20px;" />
 
 <h2 style="font-size: 20px; color: #444; margin-top: 30px;">Breve Historia</h2>
 <p style="font-size: 16px; color: #666;">
@@ -172,7 +168,6 @@ model.compile(optimizer='adam',
 </div>
 `,
   `<div>
-<img src="https://source.unsplash.com/random" alt="Imagen ilustrativa de computación cuántica" style="max-width: 100%; margin-top: 20px;" />
 
 <h2 style="font-size: 20px; color: #444; margin-top: 30px;">Breve Historia</h2>
 <p style="font-size: 16px; color: #666;">
@@ -255,8 +250,6 @@ app.listen(PORT, () => {
 </div>
 `,
   `<div>
-<img src="https://source.unsplash.com/random" alt="Imagen ilustrativa de aplicaciones móviles" style="max-width: 100%; margin-top: 20px;" />
-
 <h2 style="font-size: 20px; color: #444; margin-top: 30px;">Breve Historia</h2>
 <p style="font-size: 16px; color: #666;">
     Android e iOS son los dos sistemas operativos dominantes en el mercado de smartphones. Android, desarrollado por Google, fue lanzado en 2008, mientras que iOS, desarrollado por Apple, hizo su debut en 2007 con el iPhone. A lo largo de los años, ambas plataformas han evolucionado drásticamente, ofreciendo capacidades y funcionalidades avanzadas a los desarrolladores y usuarios.

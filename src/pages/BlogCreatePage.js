@@ -1,21 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, CSSProperties } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import DOMPurify from 'dompurify';
 // ----------------------------------------------------------------------
+import RingLoader from "react-spinners/RingLoader";
 import { Container, Stack, Typography, TextField, Button } from '@mui/material';
 
 import Iconify from '../components/iconify';
 // ----------------------------------------------------------------------
+
+const override = {
+  position: "fixed",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)"
+};
 
 export default function BlogCreatePage() {
   const apiKey = process.env.REACT_APP_API_KEY_OPEN_IA;
   const apiUrl = process.env.REACT_APP_URL_API_OPEN_IA;
 
   const [searchTerm, setSearchTerm] = useState('');
-
+  const [loading, setLoading] = useState(false); // Cambiado a false porque al principio no estamos cargando
+  const [color, setColor] = useState("#3336FF");
   const [formData, setFormData] = useState({
     title: '',
     author: '',
@@ -23,7 +32,16 @@ export default function BlogCreatePage() {
     content: '',
   });
 
+
+
+  const extractHTML = (content) => {
+    const match = content.match(/```html\n([\s\S]*?)\n```/);
+    return match ? match[1] : content;
+  };
+
   const handleSearch = async () => {
+    setLoading(true);
+
     try {
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -36,8 +54,7 @@ export default function BlogCreatePage() {
           messages: [
             {
               role: 'system',
-              content:
-                'Eres un asistente que genera contenido sobre un tema específico compatible con WYSIWYG para generar un diseño.',
+              content: 'Eres un asistente que genera contenido sobre un tema específico compatible con WYSIWYG para generar un diseño.',
             },
             {
               role: 'system',
@@ -53,16 +70,20 @@ export default function BlogCreatePage() {
 
       const data = await response.json();
       const generatedContent = data.choices[0].message.content;
-      const sanitizedContent = DOMPurify.sanitize(generatedContent); 
+      const pureHTML = extractHTML(generatedContent);
+      const sanitizedContent = DOMPurify.sanitize(pureHTML);
 
       setFormData((prevData) => ({
         ...prevData,
         content: sanitizedContent,
       }));
 
-      // Manejar la respuesta de la API aquí
+      // Finalizamos la carga
+      setLoading(false);
+
     } catch (error) {
       console.error('Error al realizar la búsqueda:', error);
+      setLoading(false); // Asegurarnos de finalizar la carga incluso si hay un error
     }
   };
 
@@ -93,7 +114,21 @@ export default function BlogCreatePage() {
       <Helmet>
         <title> Dashboard: Blog | Create </title>
       </Helmet>
-
+      <div style={{
+        display 
+        : loading ? 'flex' : 'none',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'rgba(255, 255, 255, 0.25)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 10000
+      }} className='loadingContainer'>
+        <RingLoader color={color} css={override} loading={loading} size={150} />
+      </div>
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
@@ -153,7 +188,7 @@ export default function BlogCreatePage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <Button variant="contained" onClick={handleSearch} style={{ marginLeft: '10px' }}           component={Link}> 
+              <Button variant="contained" onClick={handleSearch} style={{ marginLeft: '10px' }} component={Link}>
                 Buscar
               </Button>
             </div>
