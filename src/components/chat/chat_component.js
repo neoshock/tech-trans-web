@@ -8,6 +8,7 @@ const ChatComponent = ({ storedContent, contentTitle }) => {
     const [messages, setMessages] = useState([]);
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isButtonDisabled, setIsButtonDisabled] = useState(true);
     const messagesEndRef = useRef(null);
 
     useEffect(() => {
@@ -16,16 +17,27 @@ const ChatComponent = ({ storedContent, contentTitle }) => {
         ]);
     }, []);
 
+    useEffect(() => {
+        if (inputValue.trim() === '') {
+            setIsButtonDisabled(true);
+        } else {
+            setIsButtonDisabled(false);
+        }
+    }, [inputValue]);
+
     const handleSendMessage = async () => {
+        if (inputValue.trim() === '') return; // No permite campos vacíos
         setIsLoading(true);
+        setIsButtonDisabled(true); // Deshabilita el botón
         setMessages(prevMessages => [...prevMessages, { text: inputValue, isReceived: false }]);
         try {
-            const generatedContent = await sendMessageToIA(storedContent, inputValue, contentTitle); 
+            const generatedContent = await sendMessageToIA(storedContent, inputValue, contentTitle);
             setMessages(prevMessages => [...prevMessages, { text: generatedContent, isReceived: true }]);
         } catch (error) {
             console.error('Error al enviar el mensaje:', error);
         }
         setInputValue('');
+        setIsButtonDisabled(false); // Habilita el botón
         setIsLoading(false);
     };
 
@@ -53,7 +65,7 @@ const ChatComponent = ({ storedContent, contentTitle }) => {
                             isReceived={messageObj.isReceived}
                         />
                     ))}
-                    {isLoading && <SyncLoader 
+                    {isLoading && <SyncLoader
                         color="#1976d2"
                         loading={isLoading}
                     />}
@@ -66,6 +78,7 @@ const ChatComponent = ({ storedContent, contentTitle }) => {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     style={{ flex: 1 }}
+                    disabled={isLoading} // Deshabilita el campo de texto si está cargando
                 />
                 <Button
                     variant="contained"
@@ -74,6 +87,7 @@ const ChatComponent = ({ storedContent, contentTitle }) => {
                         marginLeft: '10px',
                         backgroundColor: '#1976d2',
                     }}
+                    disabled={isButtonDisabled || isLoading} // Deshabilita el botón si no se ha ingresado texto o está cargando
                 >
                     Enviar
                 </Button>
