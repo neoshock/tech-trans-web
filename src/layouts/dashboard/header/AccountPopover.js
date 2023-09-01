@@ -6,6 +6,8 @@ import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover 
 // mocks_
 import account from '../../../_mock/account';
 
+import authService from '../../../_mock/auth_service';
+
 
 // ----------------------------------------------------------------------
 
@@ -34,6 +36,7 @@ export default function AccountPopover() {
   };
 
   const handleClose = () => {
+    authService.logout();
     setOpen(null);
   };
 

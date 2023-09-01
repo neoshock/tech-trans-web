@@ -8,24 +8,39 @@ import Iconify from '../../../components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function LoginForm() {
-  const navigate = useNavigate();
-
+export default function LoginForm({ handleLogin }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+  const navigate = useNavigate();
+
   const handleClick = () => {
-    navigate('/dashboard', { replace: true });
+    // Este método actualizará el estado isAuthenticated
+    // Utilizar el estado para decidir si navegar o no
+    if (handleLogin(email, password)) {
+      navigate('/dashboard', { replace: true });
+    } else {
+      alert("Credenciales inválidas");
+    }
   };
 
   return (
     <>
       <Stack spacing={3}>
-        <TextField name="email" label="Email address" />
+        <TextField
+          name="email"
+          label="Email address"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+        />
 
         <TextField
           name="password"
           label="Password"
           type={showPassword ? 'text' : 'password'}
+          value={password}
+          onChange={e => setPassword(e.target.value)}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -45,9 +60,14 @@ export default function LoginForm() {
         </Link>
       </Stack>
 
-      <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleClick} style={
-        {backgroundColor: '#1C9CEA', color: '#fff'}
-      }>
+      <LoadingButton
+        fullWidth
+        size="large"
+        type="submit"
+        variant="contained"
+        onClick={handleClick}
+        style={{ backgroundColor: '#1C9CEA', color: '#fff' }}
+      >
         Login
       </LoadingButton>
     </>

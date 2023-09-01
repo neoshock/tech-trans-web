@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { styled } from '@mui/material/styles';
 import { Link, Container, Typography, Divider, Stack, Button } from '@mui/material';
@@ -5,6 +6,7 @@ import useResponsive from '../hooks/useResponsive';
 import Logo from '../components/logo';
 import Iconify from '../components/iconify';
 import { LoginForm } from '../sections/auth/login';
+import authService from '../_mock/auth_service';
 
 const StyledRoot = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
@@ -34,6 +36,11 @@ const StyledContent = styled('div')(({ theme }) => ({
 
 export default function LoginPage() {
   const mdUp = useResponsive('up', 'md');
+  
+  const handleLogin = (email, password) => {
+    const result = authService.login(email, password);
+    return result;
+  };
 
   return (
     <>
@@ -89,8 +96,7 @@ export default function LoginPage() {
                 O
               </Typography>
             </Divider>
-
-            <LoginForm />
+            <LoginForm handleLogin={handleLogin} />
           </StyledContent>
         </Container>
       </StyledRoot>
