@@ -1,4 +1,4 @@
-import { Navigate, useRoutes, Outlet } from 'react-router-dom';
+import { Navigate, useRoutes } from 'react-router-dom';
 // layouts
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
@@ -15,12 +15,13 @@ import authService from './_mock/auth_service';
 
 // Componente para manejar rutas privadas
 function PrivateRoute({ roles, children }) {
-  if (!authService.isAuthenticated) {
-    console.log(authService.isAuthenticated);
+  if (!authService.isAuthenticated()) { // Se invoca como función
     return <Navigate to="/login" replace />;
   }
 
-  if (!roles.includes(authService.role)) {
+  const userRole = authService.getRole(); // Se invoca como función
+
+  if (!roles.includes(userRole)) {
     return <Navigate to="/404" replace />;
   }
 
@@ -29,7 +30,10 @@ function PrivateRoute({ roles, children }) {
 
 // Componente para manejar la autenticación del layout del dashboard
 function AuthenticatedLayout() {
-  return authService.isAuthenticated && authService.role === 'admin'
+  const isAuthenticated = authService.isAuthenticated(); // Se invoca como función
+  const userRole = authService.getRole(); // Se invoca como función
+  console.log(userRole);
+  return (isAuthenticated && (userRole === 'admin' || userRole === 'user'))
     ? <DashboardLayout />
     : <Navigate to="/login" replace />;
 }
@@ -39,7 +43,7 @@ function DashboardRoutes() {
   return [
     { element: <Navigate to="/dashboard/app" />, index: true },
     { path: 'app', element: <DashboardAppPage /> },
-    { path: 'user', element: <PrivateRoute roles={['admin', 'user']}><UserPage /></PrivateRoute> },
+    { path: 'user', element: <PrivateRoute roles={['admin']}><UserPage /></PrivateRoute> },
     { path: 'products', element: <PrivateRoute roles={['admin']}><ProductsPage /></PrivateRoute> },
     {
       path: 'blog',

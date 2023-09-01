@@ -1,26 +1,27 @@
 // authService.js
 const authService = {
-    isAuthenticated: false,
-    role: null,
+    isAuthenticated() {
+        return localStorage.getItem('isAuthenticated') === 'true';
+    },
+    getRole() {
+        return localStorage.getItem('role');
+    },
     login(email, password) {
         if (email === "admin@example.com" && password === "admin") {
-            this.isAuthenticated = true;
-            this.role = 'admin';
+            localStorage.setItem('isAuthenticated', 'true');
+            localStorage.setItem('role', 'admin');
             return true;
         }
         if (email === "user@example.com" && password === "user") {
-            this.isAuthenticated = true;
-            this.role = 'user';
+            localStorage.setItem('isAuthenticated', 'true');
+            localStorage.setItem('role', 'user');
             return true;
         }
-        this.isAuthenticated = false;
-        this.role = null;
         return false;
-
     },
     logout(cb) {
-        this.isAuthenticated = false;
-        this.role = null;
+        localStorage.removeItem('isAuthenticated');
+        localStorage.removeItem('role');
         setTimeout(cb, 100);
     }
 };
