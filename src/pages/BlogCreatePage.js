@@ -1,38 +1,44 @@
-import React, { useState, CSSProperties } from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import DOMPurify from 'dompurify';
-// ----------------------------------------------------------------------
-import RingLoader from "react-spinners/RingLoader";
-import { Container, Stack, Typography, TextField, Button } from '@mui/material';
 
+import { faker } from '@faker-js/faker';
+import { format, parseISO } from 'date-fns';
+
+// ----------------------------------------------------------------------
+import RingLoader from 'react-spinners/RingLoader';
+import { Container, Stack, Typography, TextField, Button } from '@mui/material';
 import Iconify from '../components/iconify';
+import posts, { POST_CONTENT, POST_TITLES } from '../_mock/blog';
+import account from '../_mock/account';
+
 // ----------------------------------------------------------------------
 
 const override = {
-  position: "fixed",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)"
+  position: 'fixed',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
 };
 
 export default function BlogCreatePage() {
   const apiKey = process.env.REACT_APP_API_KEY_OPEN_IA;
   const apiUrl = process.env.REACT_APP_URL_API_OPEN_IA;
 
+  const navigate = useNavigate();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false); // Cambiado a false porque al principio no estamos cargando
-  const [color, setColor] = useState("#3336FF");
+  const [color, setColor] = useState('#3336FF');
   const [formData, setFormData] = useState({
     title: '',
-    author: '',
+    author: account.displayName,
     date: new Date().toISOString().split('T')[0], // Fecha actual en formato YYYY-MM-DD
     content: '',
   });
-
-
 
   const extractHTML = (content) => {
     const match = content.match(/```html\n([\s\S]*?)\n```/);
@@ -54,7 +60,8 @@ export default function BlogCreatePage() {
           messages: [
             {
               role: 'system',
-              content: 'Eres un asistente que genera contenido sobre un tema específico compatible con WYSIWYG para generar un diseño.',
+              content:
+                'Eres un asistente que genera contenido sobre un tema específico compatible con WYSIWYG para generar un diseño.',
             },
             {
               role: 'system',
@@ -80,7 +87,6 @@ export default function BlogCreatePage() {
 
       // Finalizamos la carga
       setLoading(false);
-
     } catch (error) {
       console.error('Error al realizar la búsqueda:', error);
       setLoading(false); // Asegurarnos de finalizar la carga incluso si hay un error
@@ -95,38 +101,75 @@ export default function BlogCreatePage() {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
+
+    await wait(2000);
+
+    const parsedDate = parseISO(formData.date);
+    const formattedDate = format(parsedDate, "EEE MMM dd yyyy HH:mm:ss 'GMT'XXX (zzzz)");
+
+    // Crea un nuevo objeto de publicación con los datos del formulario
+    const newPost = {
+      id: faker.datatype.uuid(),
+      title: formData.title,
+      content: formData.content,
+      createdAt: formattedDate, // Cambia esto según la estructura de tus datos
+      author: {
+        name: formData.author,
+        avatarUrl: `/assets/images/avatars/avatar_${posts.length + 1}.jpg`,
+      },
+      background: faker.image.imageUrl(1920, 1080, 'computer', true, true),
+      view: 0,
+      comment: 0,
+      share: 0,
+      favorite: 0,
+      cover: `/assets/images/covers/cover_${posts.length + 1}.jpg`,
+    };
+
+    posts.push(newPost);
+
+    POST_TITLES.push(formData.title);
+    POST_CONTENT.push(formData.content);
+    setLoading(false);
     // Aquí puedes realizar la lógica para enviar los datos del formulario (formData)
-    console.log('Datos del formulario:', formData);
+    navigate('/dashboard/blog', { replace: true });
   };
 
   const handleChange = (value) => {
-    console.log(value);
     setFormData((prevData) => ({
       ...prevData,
       content: value,
     }));
   };
 
+  function wait(ms) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  }
+
   return (
     <>
       <Helmet>
         <title> Dashboard: Blog | Create </title>
       </Helmet>
-      <div style={{
-        display 
-        : loading ? 'flex' : 'none',
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        backgroundColor: 'rgba(255, 255, 255, 0.25)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 10000
-      }} className='loadingContainer'>
+      <div
+        style={{
+          display: loading ? 'flex' : 'none',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(255, 255, 255, 0.25)',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 10000,
+        }}
+        className="loadingContainer"
+      >
         <RingLoader color={color} css={override} loading={loading} size={150} />
       </div>
       <Container>
@@ -162,6 +205,7 @@ export default function BlogCreatePage() {
               name="author"
               variant="outlined"
               value={formData.author}
+              disabled
               onChange={handleInputChange}
             />
           </div>

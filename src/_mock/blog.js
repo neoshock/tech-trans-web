@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 
 // ----------------------------------------------------------------------
 
-const POST_TITLES = [
+export const POST_TITLES = [
   '📦 Introducción a la Programación Orientada a Objetos',
   '🧠 Redes Neuronales y Aprendizaje Profundo',
   '🔒 Seguridad Informática: Amenazas y Prevenciones',
@@ -30,7 +30,7 @@ const POST_TITLES = [
   // '💰 Blockchain y sus Aplicaciones Más Allá de las Criptomonedas',
 ];
 
-const POST_CONTENT = [
+export const POST_CONTENT = [
   `<div>
   <h2 style="font-size: 20px; color: #444; margin-top: 30px;">Breve Historia</h2>
   <p style="font-size: 16px; color: #666;">
