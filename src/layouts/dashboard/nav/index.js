@@ -14,7 +14,7 @@ import Scrollbar from '../../../components/scrollbar';
 import NavSection from '../../../components/nav-section';
 //
 import navConfig from './config';
-import authService from '../../../_mock/auth_service';
+import {getRole} from '../../../_mock/auth_service';
 
 // ----------------------------------------------------------------------
 
@@ -39,7 +39,7 @@ export default function Nav({ openNav, onCloseNav }) {
   const { pathname } = useLocation();
   const isDesktop = useResponsive('up', 'lg');
 
-  const userRole = authService.getRole(); // Acceder al rol del usuario desde localStorage
+  const userRole = getRole(); // Acceder al rol del usuario desde localStorage
 
   const tabsToShow = navConfig.filter(tab => tab.roles.includes(userRole)); // Filtrar pestañas según el rol
 
