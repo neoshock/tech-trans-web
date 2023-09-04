@@ -18,3 +18,22 @@ export const fetchUserActivity = async (roleId) => {
     throw error;
   }
 };
+
+export const createUserByStudent = async (student) => {
+  try {
+    const response = await fetchWithToken(`${API_URL}/api/User/student`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(student),
+    });
+    return response;
+  } catch (error) {
+    console.error('Ocurrió un error:', error);
+    return {
+      statusCode: 500,
+      message: 'Ocurrió un error al registrar el usuario',
+    }
+  }
+}

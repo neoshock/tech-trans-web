@@ -6,16 +6,21 @@ import Iconify from '../components/iconify';
 // components
 import { ProductSort, ProductList, ProductCartWidget, ProductFilterSidebar } from '../sections/@dashboard/products';
 // mock
-import {fetchAndPrepareProducts} from '../_mock/products';
+import { fetchAndPrepareProducts } from '../_mock/products';
 
 import SubjectForm from '../layouts/forms/subjects_forms';
 
 // ----------------------------------------------------------------------
 
+import { getRole } from '../_mock/auth_service';
+
+
 export default function ProductsPage() {
   const [openFilter, setOpenFilter] = useState(false);
   const [isSubjectModalOpen, setIsSubjectModalOpen] = useState(false);
   const [products, setProducts] = useState([]); // Estado para almacenar productos
+
+  const userRole = getRole(); // Obtener el rol del usuario
 
   useEffect(() => {
     // Función IIFE para manejar la operación asincrónica dentro de useEffect
@@ -49,15 +54,17 @@ export default function ProductsPage() {
           <Typography variant="h4" sx={{ mb: 5 }}>
             Mis Materias
           </Typography>
-
-          <Button
-            variant="contained"
-            style={{ backgroundColor: '#2967FF', color: 'white' }}
-            startIcon={<Iconify icon="eva:plus-fill" />}
-            onClick={() => setIsSubjectModalOpen(true)}
-          >
-            Registrar Materia
-          </Button>
+          {
+            userRole === 'teacher' && (
+              <Button
+                variant="contained"
+                style={{ backgroundColor: '#2967FF', color: 'white' }}
+                startIcon={<Iconify icon="eva:plus-fill" />}
+                onClick={() => setIsSubjectModalOpen(true)}
+              >
+                Registrar Materia
+              </Button>)
+          }
         </Stack>
 
         <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>

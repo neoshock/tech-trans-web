@@ -7,14 +7,14 @@ import { Box, MenuItem, Stack, IconButton, Popover } from '@mui/material';
 
 const LANGS = [
   {
-    value: 'en',
-    label: 'English',
-    icon: '/assets/icons/ic_flag_en.svg',
-  },
-  {
     value: 'de',
     label: 'Español',
     icon: '/assets/icons/ic_flag_ec.svg',
+  },
+  {
+    value: 'en',
+    label: 'English',
+    icon: '/assets/icons/ic_flag_en.svg',
   },
 ];
 
@@ -37,8 +37,8 @@ export default function LanguagePopover() {
         onClick={handleOpen}
         sx={{
           padding: 0,
-          width: 44,
-          height: 44,
+          width: 30,
+          height: 30,
           ...(open && {
             bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.action.focusOpacity),
           }),

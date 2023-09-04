@@ -12,6 +12,7 @@ import DashboardAppPage from './pages/DashboardAppPage';
 import BlogCreatePage from './pages/BlogCreatePage';
 import BlogDetailPage from './pages/BlogDetailPage';
 import { isAuthenticated, getRole } from './_mock/auth_service';
+import RegisterPage from './pages/RegisterPage';
 
 // Componente para manejar rutas privadas
 function PrivateRoute({ roles, children }) {
@@ -33,7 +34,7 @@ function PrivateRoute({ roles, children }) {
 function AuthenticatedLayout() {
   const userIsAuthenticated = isAuthenticated();
   const userRole = getRole();
-  return userIsAuthenticated && (userRole === 'admin' || userRole === 'user') ? (
+  return userIsAuthenticated && (userRole === 'teacher' || userRole === 'student') ? (
     <DashboardLayout />
   ) : (
     <Navigate to="/login" replace />
@@ -49,7 +50,7 @@ function DashboardRoutes() {
     {
       path: 'user',
       element: (
-        <PrivateRoute roles={['admin']}>
+        <PrivateRoute roles={['teacher']}>
           <UserPage />
         </PrivateRoute>
       ),
@@ -57,7 +58,7 @@ function DashboardRoutes() {
     {
       path: 'products',
       element: (
-        <PrivateRoute roles={['admin']}>
+        <PrivateRoute roles={['teacher', 'student']}>
           <ProductsPage />
         </PrivateRoute>
       ),
@@ -66,7 +67,13 @@ function DashboardRoutes() {
       path: 'blog',
       children: [
         { path: '', element: <BlogPage /> },
-        { path: 'create', element: <BlogCreatePage /> },
+        {
+          path: 'create', element: (
+            <PrivateRoute roles={['teacher']}>
+              <BlogCreatePage />
+            </PrivateRoute>
+          )
+        },
         { path: 'detail/:blogId', element: <BlogDetailPage /> },
       ],
     },
@@ -84,6 +91,10 @@ export default function Router() {
     {
       path: 'login',
       element: <LoginPage />,
+    },
+    {
+      path: 'register',
+      element: <RegisterPage />
     },
     {
       element: <SimpleLayout />,

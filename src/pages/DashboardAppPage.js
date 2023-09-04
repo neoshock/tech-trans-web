@@ -6,32 +6,49 @@ import { faker } from '@faker-js/faker';
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
 // components
-import Iconify from '../components/iconify';
+
 // sections
 import {
-  AppTasks,
   AppNewsUpdate,
   AppOrderTimeline,
   AppCurrentVisits,
   AppWebsiteVisits,
-  AppTrafficBySite,
-  AppWidgetSummary,
-  AppCurrentSubject,
   AppConversionRates,
 } from '../sections/@dashboard/app';
 
 import { fetchUserActivity } from '../_mock/user_service';
 
-
-
 // ----------------------------------------------------------------------
+
+// Función para obtener las fechas de los últimos 3 meses
+const getLastThreeMonthsDates = () => {
+  const dates = []; // Utilizar const
+  for (let i = 0; i < 11; i += 1) { // Utilizar += 1 en lugar de ++
+    const date = new Date(); // Utilizar const
+    date.setDate(date.getDate() - i);
+    const formattedDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`; // Utilizar const
+    dates.push(formattedDate);
+  }
+  return dates.reverse(); // Invertir para que las fechas más antiguas aparezcan primero
+};
+
 
 export default function DashboardAppPage() {
   const theme = useTheme();
   const [userActivity, setUserActivity] = useState([]);
   const [activityDisplayLimit, setActivityDisplayLimit] = useState(4); // Nuevo estado para limitar las actividades mostradas
+  const isUserStudent = localStorage.getItem('role') === 'student';
+
+  const [randomChartDataA, setRandomChartDataA] = useState([]);
+  const [randomChartDataB, setRandomChartDataB] = useState([]);
+  const [randomChartDataC, setRandomChartDataC] = useState([]);
+
+  const chartLabels = getLastThreeMonthsDates(); // Obtener fechas de los últimos 3 meses
 
   useEffect(() => {
+    setRandomChartDataA([...Array(11)].map(() => getRandomInt(20, 50)));
+    setRandomChartDataB([...Array(11)].map(() => getRandomInt(40, 80)));
+    setRandomChartDataC([...Array(11)].map(() => getRandomInt(30, 70)));
     const fetchData = async () => {
       try {
         const activityData = await fetchUserActivity(2);
@@ -41,8 +58,14 @@ export default function DashboardAppPage() {
       }
     };
 
+
+
     fetchData();
   }, []);
+
+  const getRandomInt = (min, max) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  };
 
   // Nuevo manejador para el botón "Ver más"
   const handleSeeMoreClick = () => {
@@ -61,57 +84,29 @@ export default function DashboardAppPage() {
         </Typography>
 
         <Grid container spacing={3}>
-          {/* <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Weekly Sales" total={714000} icon={'ant-design:'} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="New Users" total={1352831} color="info" icon={'ant-design:apple-filled'} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Item Orders" total={1723315} color="warning" icon={'ant-design:windows-filled'} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Bug Reports" total={234} color="error" icon={'ant-design:bug-filled'} />
-          </Grid> */}
-
           <Grid item xs={12} md={6} lg={12}>
             <AppWebsiteVisits
               title="Mis Clases"
               subheader="(+43%) Rendimiento academico"
-              chartLabels={[
-                '01/01/2003',
-                '02/01/2003',
-                '03/01/2003',
-                '04/01/2003',
-                '05/01/2003',
-                '06/01/2003',
-                '07/01/2003',
-                '08/01/2003',
-                '09/01/2003',
-                '10/01/2003',
-                '11/01/2003',
-              ]}
+              chartLabels={chartLabels}
               chartData={[
                 {
                   name: 'Salon A',
                   type: 'column',
                   fill: 'solid',
-                  data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
+                  data: randomChartDataA,
                 },
                 {
                   name: 'Salon B',
                   type: 'area',
                   fill: 'gradient',
-                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
+                  data: randomChartDataB,
                 },
                 {
                   name: 'Salon C',
                   type: 'line',
                   fill: 'solid',
-                  data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
+                  data: randomChartDataC,
                 },
               ]}
             />
@@ -135,34 +130,23 @@ export default function DashboardAppPage() {
             />
           </Grid>
 
-          <Grid item xs={12} md={6} lg={8}>
-            <AppConversionRates
-              title="Rendimiento por estudiante"
-              subheader="(+43%) muestra resultados significativos"
-              chartData={[
-                { label: 'Manuel', value: 400 },
-                { label: 'Juan', value: 300 },
-                { label: 'Pedro', value: 200 },
-                { label: 'Maria', value: 100 },
-                { label: 'Luis', value: 90 },
-                { label: 'Josue', value: 80 },
-              ]}
-            />
-          </Grid>
-          {/* 
-          <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentSubject
-              title="Current Subject"
-              chartLabels={['English', 'History', 'Physics', 'Geography', 'Chinese', 'Math']}
-              chartData={[
-                { name: 'Series 1', data: [80, 50, 30, 40, 100, 20] },
-                { name: 'Series 2', data: [20, 30, 40, 80, 20, 80] },
-                { name: 'Series 3', data: [44, 76, 78, 13, 43, 10] },
-              ]}
-              chartColors={[...Array(6)].map(() => theme.palette.text.secondary)}
-            />
-          </Grid> */}
-
+          {
+            !isUserStudent && (
+              <Grid item xs={12} md={6} lg={8}>
+                <AppConversionRates
+                  title="Rendimiento por estudiante"
+                  subheader="(+43%) muestra resultados significativos"
+                  chartData={[
+                    { label: 'Manuel', value: 400 },
+                    { label: 'Juan', value: 300 },
+                    { label: 'Pedro', value: 200 },
+                    { label: 'Maria', value: 100 },
+                    { label: 'Luis', value: 90 },
+                    { label: 'Josue', value: 80 },
+                  ]}
+                />
+              </Grid>)
+          }
           <Grid item xs={12} md={6} lg={8}>
             <AppNewsUpdate
               title="Temas recientes"
@@ -181,60 +165,21 @@ export default function DashboardAppPage() {
               }))}
             />
           </Grid>
+          {
+            !isUserStudent && (
+              <Grid item xs={12} md={6} lg={4}>
+                <AppOrderTimeline
+                  title="Ultimas Seciones"
+                  list={userActivity.slice(0, activityDisplayLimit).map((activity, index) => ({
+                    id: index,
+                    title: `Login de ${activity.firstName} ${activity.lastName}`,
+                    type: `order${index + 1}`,
+                    time: new Date(activity.loginTime).toLocaleString(),
+                  }))}
+                />
 
-          <Grid item xs={12} md={6} lg={4}>
-            <AppOrderTimeline
-              title="Ultimas Seciones"
-              list={userActivity.slice(0, activityDisplayLimit).map((activity, index) => ({
-                id: index,
-                title: `Login de ${activity.firstName} ${activity.lastName}`,
-                type: `order${index + 1}`,
-                time: new Date(activity.loginTime).toLocaleString(),
-              }))}
-            />
-
-          </Grid>
-          {/* 
-          <Grid item xs={12} md={6} lg={4}>
-            <AppTrafficBySite
-              title="Traffic by Site"
-              list={[
-                {
-                  name: 'FaceBook',
-                  value: 323234,
-                  icon: <Iconify icon={'eva:facebook-fill'} color="#1877F2" width={32} />,
-                },
-                {
-                  name: 'Google',
-                  value: 341212,
-                  icon: <Iconify icon={'eva:google-fill'} color="#DF3E30" width={32} />,
-                },
-                {
-                  name: 'Linkedin',
-                  value: 411213,
-                  icon: <Iconify icon={'eva:linkedin-fill'} color="#006097" width={32} />,
-                },
-                {
-                  name: 'Twitter',
-                  value: 443232,
-                  icon: <Iconify icon={'eva:twitter-fill'} color="#1C9CEA" width={32} />,
-                },
-              ]}
-            />
-          </Grid> */}
-
-          {/* <Grid item xs={12} md={6} lg={8}>
-            <AppTasks
-              title="Tasks"
-              list={[
-                { id: '1', label: 'Create FireStone Logo' },
-                { id: '2', label: 'Add SCSS and JS files if required' },
-                { id: '3', label: 'Stakeholder Meeting' },
-                { id: '4', label: 'Scoping & Estimations' },
-                { id: '5', label: 'Sprint Showcase' },
-              ]}
-            />
-          </Grid> */}
+              </Grid>)
+          }
         </Grid>
       </Container>
     </>

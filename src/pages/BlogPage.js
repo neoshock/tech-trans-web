@@ -15,6 +15,7 @@ import { BlogPostCard, BlogPostsSort, BlogPostsSearch } from '../sections/@dashb
 // mock
 import fetchAndPreparePost from '../_mock/blog';
 // ----------------------------------------------------------------------
+import { getRole } from '../_mock/auth_service';
 
 const SORT_OPTIONS = [
   { value: 'latest', label: 'Latest' },
@@ -27,6 +28,8 @@ const SORT_OPTIONS = [
 export default function BlogPage() {
 
   const [POSTS, setPOSTS] = useState([]); // Estado para los posts
+
+  const userRole = getRole();  // Obtener el rol del usuario
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,14 +52,18 @@ export default function BlogPage() {
           <Typography variant="h4" gutterBottom>
             Mis Temas | Blog
           </Typography>
-          <Button
-            variant="contained"
-            startIcon={<Iconify icon="eva:plus-fill" />}
-            component={Link}
-            to="/dashboard/blog/create"
-          >
-            Nuevo Post
-          </Button>
+          {
+            userRole === 'teacher' && (
+              <Button
+                variant="contained"
+                startIcon={<Iconify icon="eva:plus-fill" />}
+                component={Link}
+                to="/dashboard/blog/create"
+              >
+                Nuevo Post
+              </Button>
+            )
+          }
         </Stack>
 
         <Stack mb={5} direction="row" alignItems="center" justifyContent="space-between">

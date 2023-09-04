@@ -68,7 +68,6 @@ export default function StudentForm({ open, handleClose, handleSubmit }) {
                     value={student.Surname}
                     onChange={handleChange}
                 />
-                {/* Aquí puedes agregar otros campos según necesites */}
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose} color="primary">

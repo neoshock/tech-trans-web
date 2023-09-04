@@ -1,28 +1,39 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// @mui
 import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-// components
 import Iconify from '../../../components/iconify';
-
-// ----------------------------------------------------------------------
 
 export default function LoginForm({ handleLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-
+  const [formErrors, setFormErrors] = useState({ email: '', password: '' });
+  
   const navigate = useNavigate();
 
+  const validateForm = () => {
+    let isValid = true;
+    const errors = { email: '', password: '' };
+
+    if (!email || !email.includes('@')) {
+      isValid = false;
+      errors.email = 'Ingrese un email válido.';
+    }
+
+    if (!password || password.length < 6) {
+      isValid = false;
+      errors.password = 'La contraseña debe tener al menos 6 caracteres.';
+    }
+
+    setFormErrors(errors);
+    return isValid;
+  };
+
   const handleClick = async () => {
-    // Este método actualizará el estado isAuthenticated
-    // Utilizar el estado para decidir si navegar o no
-    const result = await handleLogin(email.toLowerCase(), password);
-    if (result) {
-      navigate('/dashboard', { replace: true });
-    } else {
-      alert("Credenciales inválidas");
+    if (validateForm()) {
+      const result = await handleLogin(email.toLowerCase(), password);
+      // Aquí puedes manejar la navegación o mostrar más mensajes según el resultado
     }
   };
 
@@ -31,17 +42,21 @@ export default function LoginForm({ handleLogin }) {
       <Stack spacing={3}>
         <TextField
           name="email"
-          label="Email address"
+          label="Dirección de correo electrónico"
           value={email}
           onChange={e => setEmail(e.target.value)}
+          error={Boolean(formErrors.email)}
+          helperText={formErrors.email}
         />
 
         <TextField
           name="password"
-          label="Password"
+          label="Contraseña"
           type={showPassword ? 'text' : 'password'}
           value={password}
           onChange={e => setPassword(e.target.value)}
+          error={Boolean(formErrors.password)}
+          helperText={formErrors.password}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -55,9 +70,9 @@ export default function LoginForm({ handleLogin }) {
       </Stack>
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-        <Checkbox name="remember" label="Remember me" />
+        <Checkbox name="remember" label="Recuérdame" />
         <Link variant="subtitle2" underline="hover">
-          Forgot password?
+          ¿Olvidaste tu contraseña?
         </Link>
       </Stack>
 
@@ -69,7 +84,7 @@ export default function LoginForm({ handleLogin }) {
         onClick={handleClick}
         style={{ backgroundColor: '#1C9CEA', color: '#fff' }}
       >
-        Login
+        Iniciar sesión
       </LoadingButton>
     </>
   );

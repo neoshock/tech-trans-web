@@ -29,24 +29,6 @@ import Scrollbar from '../../../components/scrollbar';
 // ----------------------------------------------------------------------
 
 const NOTIFICATIONS = [
-  {
-    id: faker.datatype.uuid(),
-    title: 'Nueva tarea de Programación',
-    description: 'Entregar antes del viernes',
-    avatar: null,
-    type: 'tarea_programacion',
-    createdAt: set(new Date(), { hours: 10, minutes: 30 }),
-    isUnRead: true,
-  },
-  {
-    id: faker.datatype.uuid(),
-    title: 'Entrega de proyecto final',
-    description: 'Proyecto de base de datos',
-    avatar: '/assets/images/avatars/avatar_2.jpg',
-    type: 'entrega_proyecto',
-    createdAt: sub(new Date(), { hours: 3, minutes: 30 }),
-    isUnRead: true,
-  },
 ];
 
 export default function NotificationsPopover() {
@@ -99,7 +81,7 @@ export default function NotificationsPopover() {
           <Box sx={{ flexGrow: 1 }}>
             <Typography variant="subtitle1">Notificaciones</Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              Tienes {totalUnRead} notificaciones 
+              Tienes {totalUnRead} notificaciones
             </Typography>
           </Box>
 
