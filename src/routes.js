@@ -11,7 +11,7 @@ import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import BlogCreatePage from './pages/BlogCreatePage';
 import BlogDetailPage from './pages/BlogDetailPage';
-import authService, { isAuthenticated, getRole } from './_mock/auth_service';
+import { isAuthenticated, getRole } from './_mock/auth_service';
 
 // Componente para manejar rutas privadas
 function PrivateRoute({ roles, children }) {
