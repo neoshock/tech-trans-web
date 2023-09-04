@@ -15,10 +15,11 @@ export default function LoginForm({ handleLogin }) {
 
   const navigate = useNavigate();
 
-  const handleClick = () => {
+  const handleClick = async () => {
     // Este método actualizará el estado isAuthenticated
     // Utilizar el estado para decidir si navegar o no
-    if (handleLogin(email, password)) {
+    const result = await handleLogin(email.toLowerCase(), password);
+    if (result) {
       navigate('/dashboard', { replace: true });
     } else {
       alert("Credenciales inválidas");
