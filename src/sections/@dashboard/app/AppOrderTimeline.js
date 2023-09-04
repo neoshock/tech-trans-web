@@ -1,7 +1,9 @@
 // @mui
 import PropTypes from 'prop-types';
-import { Card, Typography, CardHeader, CardContent } from '@mui/material';
+import { Card, Typography, CardHeader, CardContent, Divider, Box, Button } from '@mui/material';
 import { Timeline, TimelineDot, TimelineItem, TimelineContent, TimelineSeparator, TimelineConnector } from '@mui/lab';
+import Iconify from '../../../components/iconify';
+
 // utils
 import { fDateTime } from '../../../utils/formatTime';
 
@@ -31,6 +33,12 @@ export default function AppOrderTimeline({ title, subheader, list, ...other }) {
           ))}
         </Timeline>
       </CardContent>
+      <Divider />
+      <Box sx={{ p: 2, textAlign: 'right' }}>
+        <Button size="small" color="inherit" endIcon={<Iconify icon={'eva:arrow-ios-forward-fill'} />}>
+          View all
+        </Button>
+      </Box>
     </Card>
   );
 }

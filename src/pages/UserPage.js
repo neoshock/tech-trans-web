@@ -28,6 +28,7 @@ import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
+import StudentForm from '../layouts/forms/student_form';
 // mock
 import USERLIST from '../_mock/user';
 
@@ -87,6 +88,13 @@ export default function UserPage() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleSubmit = (student) => {
+    console.log("Datos del estudiante:", student);
+    // Aquí podrías hacer una llamada API para guardar los datos del estudiante
+  };
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -149,7 +157,7 @@ export default function UserPage() {
   return (
     <>
       <Helmet>
-        <title> User | Minimal UI </title>
+        <title> Usuarios </title>
       </Helmet>
 
       <Container>
@@ -157,7 +165,10 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             Mi listado de estudiantes
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+          <Button variant="contained" style={
+            { backgroundColor: '#2967FF', color: 'white' }}
+            startIcon={<Iconify icon="eva:plus-fill" />} onClick={() => setIsModalOpen(true)}
+          >
             Registrar Estudiante
           </Button>
         </Stack>
@@ -289,6 +300,11 @@ export default function UserPage() {
           Delete
         </MenuItem>
       </Popover>
+      <StudentForm
+        open={isModalOpen}
+        handleClose={() => setIsModalOpen(false)}
+        handleSubmit={handleSubmit}
+      />
     </>
   );
 }

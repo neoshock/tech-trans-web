@@ -147,7 +147,7 @@ export default function BlogPostCard({ post, index }) {
               }),
             }}
             component={RLink}
-            to={`/dashboard/blog/detail/${index}`}
+            to={`/dashboard/blog/detail/${post.id}`}
           >
             {title}
           </StyledTitle>

@@ -1,3 +1,9 @@
+import
+React,
+{
+  useState,
+  useEffect
+} from 'react';
 import { Helmet } from 'react-helmet-async';
 
 import { Link } from 'react-router-dom';
@@ -7,7 +13,7 @@ import { Grid, Button, Container, Stack, Typography } from '@mui/material';
 import Iconify from '../components/iconify';
 import { BlogPostCard, BlogPostsSort, BlogPostsSearch } from '../sections/@dashboard/blog';
 // mock
-import POSTS from '../_mock/blog';
+import fetchAndPreparePost from '../_mock/blog';
 // ----------------------------------------------------------------------
 
 const SORT_OPTIONS = [
@@ -19,6 +25,19 @@ const SORT_OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function BlogPage() {
+
+  const [POSTS, setPOSTS] = useState([]); // Estado para los posts
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const fetchedPosts = await fetchAndPreparePost();
+      console.log(fetchedPosts);
+      setPOSTS(fetchedPosts);
+    };
+    fetchData();
+  }, []);
+
+
   return (
     <>
       <Helmet>

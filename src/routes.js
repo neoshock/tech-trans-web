@@ -11,16 +11,15 @@ import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import BlogCreatePage from './pages/BlogCreatePage';
 import BlogDetailPage from './pages/BlogDetailPage';
-import authService from './_mock/auth_service';
+import authService, { isAuthenticated, getRole } from './_mock/auth_service';
 
 // Componente para manejar rutas privadas
 function PrivateRoute({ roles, children }) {
-  if (!authService.isAuthenticated()) {
-    // Se invoca como función
+  if (!isAuthenticated()) {
     return <Navigate to="/login" replace />;
   }
 
-  const userRole = authService.getRole(); // Se invoca como función
+  const userRole = getRole();
 
   if (!roles.includes(userRole)) {
     return <Navigate to="/404" replace />;
@@ -29,16 +28,18 @@ function PrivateRoute({ roles, children }) {
   return children;
 }
 
+
 // Componente para manejar la autenticación del layout del dashboard
 function AuthenticatedLayout() {
-  const isAuthenticated = authService.isAuthenticated(); // Se invoca como función
-  const userRole = authService.getRole(); // Se invoca como función
-  return isAuthenticated && (userRole === 'admin' || userRole === 'user') ? (
+  const userIsAuthenticated = isAuthenticated();
+  const userRole = getRole();
+  return userIsAuthenticated && (userRole === 'admin' || userRole === 'user') ? (
     <DashboardLayout />
   ) : (
     <Navigate to="/login" replace />
   );
 }
+
 
 // Rutas privadas del dashboard
 function DashboardRoutes() {

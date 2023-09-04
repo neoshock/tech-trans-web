@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from 'react';
+
 import { Helmet } from 'react-helmet-async';
 import { faker } from '@faker-js/faker';
 // @mui
@@ -18,10 +20,34 @@ import {
   AppConversionRates,
 } from '../sections/@dashboard/app';
 
+import { fetchUserActivity } from '../_mock/user_service';
+
+
+
 // ----------------------------------------------------------------------
 
 export default function DashboardAppPage() {
   const theme = useTheme();
+  const [userActivity, setUserActivity] = useState([]);
+  const [activityDisplayLimit, setActivityDisplayLimit] = useState(4); // Nuevo estado para limitar las actividades mostradas
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const activityData = await fetchUserActivity(2);
+        setUserActivity(activityData);
+      } catch (error) {
+        console.error('Ocurrió un error al obtener los datos:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Nuevo manejador para el botón "Ver más"
+  const handleSeeMoreClick = () => {
+    setActivityDisplayLimit(prevLimit => prevLimit + 5);
+  };
 
   return (
     <>
@@ -159,19 +185,14 @@ export default function DashboardAppPage() {
           <Grid item xs={12} md={6} lg={4}>
             <AppOrderTimeline
               title="Ultimas Seciones"
-              list={[...Array(5)].map((_, index) => ({
-                id: faker.datatype.uuid(),
-                title: [
-                  'Reunion con Carlos',
-                  'Reunion con Juan',
-                  'Reunion con Pedro',
-                  'Reunion con Maria',
-                  'Reunion con Luis',
-                ][index],
+              list={userActivity.slice(0, activityDisplayLimit).map((activity, index) => ({
+                id: index,
+                title: `Login de ${activity.firstName} ${activity.lastName}`,
                 type: `order${index + 1}`,
-                time: faker.date.past(),
+                time: new Date(activity.loginTime).toLocaleString(),
               }))}
             />
+
           </Grid>
           {/* 
           <Grid item xs={12} md={6} lg={4}>

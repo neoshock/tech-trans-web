@@ -4,7 +4,6 @@ import { styled } from '@mui/material/styles';
 import { Link, Container, Typography, Divider, Stack, Button } from '@mui/material';
 import useResponsive from '../hooks/useResponsive';
 import Logo from '../components/logo';
-import Iconify from '../components/iconify';
 import { LoginForm } from '../sections/auth/login';
 import authService from '../_mock/auth_service';
 
@@ -37,8 +36,8 @@ const StyledContent = styled('div')(({ theme }) => ({
 export default function LoginPage() {
   const mdUp = useResponsive('up', 'md');
   
-  const handleLogin = (email, password) => {
-    const result = authService.login(email, password);
+  const handleLogin = async (email, password) => {
+    const result = await authService.login(email, password);
     return result;
   };
 

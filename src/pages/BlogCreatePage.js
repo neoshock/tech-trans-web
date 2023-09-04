@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
@@ -10,10 +10,13 @@ import { format, parseISO } from 'date-fns';
 
 // ----------------------------------------------------------------------
 import RingLoader from 'react-spinners/RingLoader';
-import { Container, Stack, Typography, TextField, Button } from '@mui/material';
+import { Container, Stack, Typography, TextField, Button, Select, MenuItem } from '@mui/material';
 import Iconify from '../components/iconify';
-import posts, { POST_CONTENT, POST_TITLES } from '../_mock/blog';
+import posts, { POST_CONTENT, POST_TITLES, createBlog } from '../_mock/blog';
 import account from '../_mock/account';
+
+import { fetchAndPrepareProducts } from '../_mock/products';
+
 
 // ----------------------------------------------------------------------
 
@@ -27,6 +30,17 @@ const override = {
 export default function BlogCreatePage() {
   const apiKey = process.env.REACT_APP_API_KEY_OPEN_IA;
   const apiUrl = process.env.REACT_APP_URL_API_OPEN_IA;
+
+  const [subjects, setSubjects] = useState([]); // Estado para las materias
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const userId = 'tuUserId'; // Reemplaza con el userId correspondiente
+      const fetchedSubjects = await fetchAndPrepareProducts();
+      setSubjects(fetchedSubjects);
+    };
+    fetchData();
+  }, []);
 
   const navigate = useNavigate();
 
@@ -43,6 +57,14 @@ export default function BlogCreatePage() {
   const extractHTML = (content) => {
     const match = content.match(/```html\n([\s\S]*?)\n```/);
     return match ? match[1] : content;
+  };
+
+  const handleSelectChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   const handleSearch = async () => {
@@ -105,36 +127,29 @@ export default function BlogCreatePage() {
     event.preventDefault();
     setLoading(true);
 
-    await wait(2000);
-
-    const parsedDate = parseISO(formData.date);
-    const formattedDate = format(parsedDate, "EEE MMM dd yyyy HH:mm:ss 'GMT'XXX (zzzz)");
-
-    // Crea un nuevo objeto de publicación con los datos del formulario
-    const newPost = {
-      id: faker.datatype.uuid(),
-      title: formData.title,
+    const newBlogData = {
+      issue: formData.title,
+      date: formData.date,
+      imageBackground: 'https://img.freepik.com/free-vector/flat-design-english-school-background_23-2149487419.jpg?w=2000', // Esto podría ser dinámico
+      subjectId: formData.subjectId,
       content: formData.content,
-      createdAt: formattedDate, // Cambia esto según la estructura de tus datos
-      author: {
-        name: formData.author,
-        avatarUrl: `/assets/images/avatars/avatar_${posts.length + 1}.jpg`,
-      },
-      background: faker.image.imageUrl(1920, 1080, 'computer', true, true),
-      view: 0,
-      comment: 0,
-      share: 0,
-      favorite: 0,
-      cover: `/assets/images/covers/cover_${posts.length + 1}.jpg`,
     };
 
-    posts.push(newPost);
+    console.log(newBlogData);
+    try {
+      const createdBlog = await createBlog(newBlogData);
+      console.log('Blog creado con éxito:', createdBlog);
+      if(createdBlog.statusCode === 200) {
+        alert("Blog creado con éxito");
+        navigate('/dashboard/blog');
+      }else {
+        alert("Error al crear el blog");
+      }
+    } catch (error) {
+      console.error('Error al crear el blog:', error);
+    }
 
-    POST_TITLES.push(formData.title);
-    POST_CONTENT.push(formData.content);
     setLoading(false);
-    // Aquí puedes realizar la lógica para enviar los datos del formulario (formData)
-    navigate('/dashboard/blog', { replace: true });
   };
 
   const handleChange = (value) => {
@@ -188,7 +203,7 @@ export default function BlogCreatePage() {
           </Button>
         </Stack>
         <form className="grid grid-cols-12 gap-6 " onSubmit={handleSubmit}>
-          <div className="col-span-6">
+          <div className="col-span-4">
             <TextField
               fullWidth
               label="Título"
@@ -199,6 +214,24 @@ export default function BlogCreatePage() {
             />
           </div>
           <div className="col-span-4">
+            <Select
+              label="Materia"
+              name="subjectId"
+              value={formData.subjectId || ''} // Asegúrate de que formData tenga una propiedad 'subjectId'
+              onChange={handleSelectChange}
+              fullWidth
+            >
+              <MenuItem value="" disabled>
+                <em>Seleccione una materia</em>
+              </MenuItem>
+              {subjects.map((subject, index) => (
+                <MenuItem key={index} value={subject.id}>
+                  {subject.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </div>
+          <div className="col-span-2">
             <TextField
               fullWidth
               label="Autor"

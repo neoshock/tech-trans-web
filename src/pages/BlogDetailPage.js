@@ -1,9 +1,9 @@
 import { useParams } from 'react-router-dom';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Typography, Card, CardContent, Avatar, Grid, styled, Modal } from '@mui/material';
 
 import SvgColor from '../components/svg-color';
-import POSTS from '../_mock/blog';
+import { getBlogDetail } from '../_mock/blog';
 import FloatingButton from '../components/buttons/float_button';
 import ChatComponent from '../components/chat/chat_component';
 import { fDate } from '../utils/formatTime';
@@ -15,8 +15,24 @@ const StyleCardCover = styled('div')({
 
 export default function BlogDetailPage() {
   const { blogId } = useParams();
-  const { title, content, author, createdAt, background } = POSTS[blogId];
+  const [blogDetail, setBlogDetail] = useState({});
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    async function fetchBlogDetail() {
+      try {
+        const data = await getBlogDetail(blogId);
+        console.log(data);
+        setBlogDetail(data);
+      } catch (error) {
+        console.error("Could not fetch blog detail:", error);
+      }
+    }
+
+    fetchBlogDetail();
+  }, [blogId]);
+
+  const { title, content, author, createdAt, background } = blogDetail;
 
   return (
     <>
@@ -80,18 +96,6 @@ export default function BlogDetailPage() {
                 }}
               />
 
-              <Avatar
-                alt={author.name}
-                src={author.avatarUrl}
-                sx={{
-                  zIndex: 9,
-                  top: 24,
-                  left: 24,
-                  width: 40,
-                  height: 40,
-                  position: 'absolute',
-                }}
-              />
 
               <Box sx={{ position: 'absolute', bottom: 16, left: 16 }}>
                 <Typography variant="subtitle2" color="textSecondary" gutterBottom>
