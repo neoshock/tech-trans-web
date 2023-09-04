@@ -12,7 +12,7 @@ import { format, parseISO } from 'date-fns';
 import RingLoader from 'react-spinners/RingLoader';
 import { Container, Stack, Typography, TextField, Button, Select, MenuItem } from '@mui/material';
 import Iconify from '../components/iconify';
-import posts, { POST_CONTENT, POST_TITLES, createBlog } from '../_mock/blog';
+import { createBlog } from '../_mock/blog';
 import account from '../_mock/account';
 
 import { fetchAndPrepareProducts } from '../_mock/products';
