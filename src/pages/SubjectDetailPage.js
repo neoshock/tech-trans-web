@@ -16,6 +16,8 @@ import { getUsersBySubject, addUserToSubject } from '../_mock/user_service';
 import AddStudenForm from '../layouts/forms/add_student_form';
 // ----------------------------------------------------------------------
 
+import { getRole } from '../_mock/auth_service';
+
 const StyleCardCover = styled('div')({
     position: 'relative',
     paddingTop: 'calc(100% * 1 / 4)',
@@ -35,8 +37,8 @@ export default function SubjectDetailPage() {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [selected, setSelected] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [open, setOpen] = useState(null);
 
+    const userRole = getRole();  // Obtener el rol del usuario
 
     useEffect(() => {
         // Función IIFE para manejar la operación asincrónica dentro de useEffect
@@ -146,13 +148,17 @@ export default function SubjectDetailPage() {
                     <Typography variant="h4" gutterBottom>
                         Estudiantes de la Materia
                     </Typography>
-                    <Button variant="contained" style={
-                        { backgroundColor: '#2967FF', color: 'white' }}
-                        startIcon={<Iconify icon="eva:plus-fill" />}
-                        onClick={() => setIsModalOpen(true)}
-                    >
-                        Agregar Estudiante
-                    </Button>
+                    {
+                        userRole === 'teacher' ?
+                            <Button variant="contained" style={
+                                { backgroundColor: '#2967FF', color: 'white' }}
+                                startIcon={<Iconify icon="eva:plus-fill" />}
+                                onClick={() => setIsModalOpen(true)}
+                            >
+                                Agregar Estudiante
+                            </Button>
+                            : <></>
+                    }
                 </Stack>
 
                 <Card>
@@ -213,7 +219,7 @@ export default function SubjectDetailPage() {
             <AddStudenForm
                 open={isModalOpen}
                 handleClose={() => setIsModalOpen(false)}
-                handleSubmit= {handleSubmit}
+                handleSubmit={handleSubmit}
                 subjectId={subjectId}
             />
         </>

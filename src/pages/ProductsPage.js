@@ -155,7 +155,17 @@ export default function ProductsPage() {
           }
         </Stack>
 
-        <ProductList products={products} />
+
+        {
+          products.length !== 0 ?
+            <ProductList products={products} />
+            : <>
+              <Typography variant="h5" sx={{ mb: 5 }}>
+                No tienes materias registradas
+              </Typography>
+            </>
+        }
+
         {/* <ProductCartWidget /> */}
       </Container>
       <SubjectForm

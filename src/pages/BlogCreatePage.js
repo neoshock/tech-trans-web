@@ -13,7 +13,7 @@ import RingLoader from 'react-spinners/RingLoader';
 import { Container, Stack, Typography, TextField, Button, Select, MenuItem } from '@mui/material';
 import Iconify from '../components/iconify';
 import { createBlog } from '../_mock/blog';
-import account from '../_mock/account';
+import { getUserDataFromLocalStorage } from '../_mock/account';
 
 import { fetchAndPrepareProducts } from '../_mock/products';
 
@@ -40,6 +40,19 @@ export default function BlogCreatePage() {
       setSubjects(fetchedSubjects);
     };
     fetchData();
+  }, []);
+
+  const [account, setAccount] = useState({}); // Estado para la cuenta del usuario
+
+  useEffect(() => {
+    // is await
+    (
+      async () => {
+        const result = await getUserDataFromLocalStorage();
+        setAccount(result);
+      }
+    )
+      ();
   }, []);
 
   const navigate = useNavigate();
@@ -139,10 +152,10 @@ export default function BlogCreatePage() {
     try {
       const createdBlog = await createBlog(newBlogData);
       console.log('Blog creado con éxito:', createdBlog);
-      if(createdBlog.statusCode === 200) {
+      if (createdBlog.statusCode === 200) {
         alert("Blog creado con éxito");
         navigate('/dashboard/blog');
-      }else {
+      } else {
         alert("Error al crear el blog");
       }
     } catch (error) {
@@ -237,9 +250,8 @@ export default function BlogCreatePage() {
               label="Autor"
               name="author"
               variant="outlined"
-              value={formData.author}
+              value={account.displayName}
               disabled
-              onChange={handleInputChange}
             />
           </div>
           <div className="col-span-2">

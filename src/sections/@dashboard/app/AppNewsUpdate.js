@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 // @mui
 import PropTypes from 'prop-types';
 import { Box, Stack, Link, Card, Button, Divider, Typography, CardHeader } from '@mui/material';
@@ -8,6 +9,8 @@ import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
 
 // ----------------------------------------------------------------------
+
+
 
 AppNewsUpdate.propTypes = {
   title: PropTypes.string,
@@ -43,7 +46,7 @@ NewsItem.propTypes = {
 };
 
 function NewsItem({ news }) {
-  const { image, title, description, postedAt } = news;
+  const { image, title, autor, postedAt } = news;
 
   return (
     <Stack direction="row" alignItems="center" spacing={2}>
@@ -55,13 +58,9 @@ function NewsItem({ news }) {
         </Link>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-          {description}
+          {autor}
         </Typography>
       </Box>
-
-      <Typography variant="caption" sx={{ pr: 3, flexShrink: 0, color: 'text.secondary' }}>
-        {fToNow(postedAt)}
-      </Typography>
     </Stack>
   );
 }

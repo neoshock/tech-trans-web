@@ -34,7 +34,6 @@ export default function BlogPage() {
   useEffect(() => {
     const fetchData = async () => {
       const fetchedPosts = await fetchAndPreparePost();
-      console.log(fetchedPosts);
       setPOSTS(fetchedPosts);
     };
     fetchData();
@@ -72,9 +71,15 @@ export default function BlogPage() {
         </Stack>
 
         <Grid container spacing={3}>
+          {/* Posts */}
           {POSTS.map((post, index) => (
             <BlogPostCard key={post.id} post={post} index={index} />
           ))}
+          {POSTS.length === 0 ?
+            <Typography p={3} variant="h5" sx={{ mb: 5 }}>
+              No tienes posts registrados
+            </Typography>
+            : <></>}
         </Grid>
       </Container>
     </>

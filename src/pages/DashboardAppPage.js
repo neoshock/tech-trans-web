@@ -19,6 +19,8 @@ import {
 import { fetchUserActivity } from '../_mock/user_service';
 
 // ----------------------------------------------------------------------
+import fetchAndPreparePost from '../_mock/blog';
+
 
 // Función para obtener las fechas de los últimos 3 meses
 const getLastThreeMonthsDates = () => {
@@ -42,6 +44,18 @@ export default function DashboardAppPage() {
   const [randomChartDataA, setRandomChartDataA] = useState([]);
   const [randomChartDataB, setRandomChartDataB] = useState([]);
   const [randomChartDataC, setRandomChartDataC] = useState([]);
+
+
+  const [POSTS, setPOSTS] = useState([]); // Estado para los posts
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const fetchedPosts = await fetchAndPreparePost();
+      setPOSTS(fetchedPosts);
+    };
+    fetchData();
+  }
+    , []);
 
   const chartLabels = getLastThreeMonthsDates(); // Obtener fechas de los últimos 3 meses
 
@@ -67,10 +81,6 @@ export default function DashboardAppPage() {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
 
-  // Nuevo manejador para el botón "Ver más"
-  const handleSeeMoreClick = () => {
-    setActivityDisplayLimit(prevLimit => prevLimit + 5);
-  };
 
   return (
     <>
@@ -150,18 +160,12 @@ export default function DashboardAppPage() {
           <Grid item xs={12} md={6} lg={8}>
             <AppNewsUpdate
               title="Temas recientes"
-              list={[...Array(5)].map((_, index) => ({
-                id: faker.datatype.uuid(),
-                title: [
-                  'Conceptos Basicos de Programacion',
-                  'Estructura de datos',
-                  'Arquitectura de Computadoras',
-                  'El uso de Arrays',
-                  'Que es Recursividad',
-                ][index],
-                description: faker.name.jobTitle(),
-                image: `/assets/images/covers/cover_${index + 1}.jpg`,
-                postedAt: faker.date.recent(),
+              list={POSTS.slice(0, 5).map((post, index) => ({
+                id: index,
+                title: post.title,
+                autor: post.author.name,
+                image: post.cover,
+                time: post.createdAt,
               }))}
             />
           </Grid>

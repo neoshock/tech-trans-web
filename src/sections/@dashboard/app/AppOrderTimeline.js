@@ -40,7 +40,7 @@ export default function AppOrderTimeline({ title, subheader, list, ...other }) {
 OrderItem.propTypes = {
   isLast: PropTypes.bool,
   item: PropTypes.shape({
-    time: PropTypes.instanceOf(Date),
+    time: PropTypes.string,
     title: PropTypes.string,
     type: PropTypes.string,
   }),
