@@ -13,6 +13,7 @@ import BlogCreatePage from './pages/BlogCreatePage';
 import BlogDetailPage from './pages/BlogDetailPage';
 import { isAuthenticated, getRole } from './_mock/auth_service';
 import RegisterPage from './pages/RegisterPage';
+import SubjectDetailPage from './pages/SubjectDetailPage';
 
 // Componente para manejar rutas privadas
 function PrivateRoute({ roles, children }) {
@@ -57,11 +58,18 @@ function DashboardRoutes() {
     },
     {
       path: 'products',
-      element: (
-        <PrivateRoute roles={['teacher', 'student']}>
-          <ProductsPage />
-        </PrivateRoute>
-      ),
+      children: [
+        {
+          path: '', element: (
+            <PrivateRoute roles={['teacher', 'student']}>
+              <ProductsPage />
+            </PrivateRoute>
+          )
+        }, 
+        {
+         path: 'detail/:subjectId', element: <SubjectDetailPage/>
+        }
+      ],
     },
     {
       path: 'blog',

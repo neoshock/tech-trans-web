@@ -36,9 +36,6 @@ export default function AlertDialog({ title = "Atención", message = "Mensaje aq
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText
-                        width={
-                            600
-                        }
                         id="alert-dialog-description">
                         {message}
                     </DialogContentText>

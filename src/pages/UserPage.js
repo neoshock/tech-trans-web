@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 // @mui
 import {
   Card,
@@ -30,17 +30,14 @@ import Scrollbar from '../components/scrollbar';
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 import StudentForm from '../layouts/forms/student_form';
 // mock
-import USERLIST from '../_mock/user';
+import { fetchUsersByTeacher } from '../_mock/user_service';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'company', label: 'Company', alignRight: false },
-  { id: 'role', label: 'Role', alignRight: false },
-  { id: 'isVerified', label: 'Verified', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false },
-  { id: '' },
+  { id: 'name', label: 'Nombre', alignRight: false },
+  { id: 'company', label: 'Apellido', alignRight: false },
+  { id: 'email', label: 'Email', alignRight: false },
 ];
 
 // ----------------------------------------------------------------------
@@ -69,7 +66,7 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_user) => _user.firtsName.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -83,13 +80,24 @@ export default function UserPage() {
 
   const [selected, setSelected] = useState([]);
 
-  const [orderBy, setOrderBy] = useState('name');
+  const [orderBy, setOrderBy] = useState('firtsName');
 
   const [filterName, setFilterName] = useState('');
 
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [USERLIST, setUSERLIST] = useState([]);
+
+  useEffect(() => {
+    // Función IIFE para manejar la operación asincrónica dentro de useEffect
+    (async () => {
+      const fetchedUsers = await fetchUsersByTeacher();
+      setUSERLIST(fetchedUsers);
+    })();
+  }
+    , []);
 
   const handleSubmit = (student) => {
     console.log("Datos del estudiante:", student);
@@ -165,12 +173,12 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             Mi listado de estudiantes
           </Typography>
-          <Button variant="contained" style={
+          {/* <Button variant="contained" style={
             { backgroundColor: '#2967FF', color: 'white' }}
             startIcon={<Iconify icon="eva:plus-fill" />} onClick={() => setIsModalOpen(true)}
           >
             Registrar Estudiante
-          </Button>
+          </Button> */}
         </Stack>
 
         <Card>
@@ -190,39 +198,30 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                    const selectedUser = selected.indexOf(name) !== -1;
+                    const {
+                      email,
+                      firtsLastName,
+                      firtsName,
+                      studentId,
+                    } = row;
+                    const selectedUser = selected.indexOf(firtsName) !== -1;
 
                     return (
-                      <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                      <TableRow hover key={studentId} tabIndex={-1} role="checkbox" selected={selectedUser}>
                         <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, firtsName)} />
                         </TableCell>
 
-                        <TableCell component="th" scope="row" padding="none">
+                        <TableCell component="th" scope="row">
                           <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
+                            <Avatar alt={firtsName} src='/assets/images/avatars/avatar_2.jpg' />
                             <Typography variant="subtitle2" noWrap>
-                              {name}
+                              {firtsName}
                             </Typography>
                           </Stack>
                         </TableCell>
-
-                        <TableCell align="left">{company}</TableCell>
-
-                        <TableCell align="left">{role}</TableCell>
-
-                        <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
-
-                        <TableCell align="left">
-                          <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
-                        </TableCell>
-
-                        <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                            <Iconify icon={'eva:more-vertical-fill'} />
-                          </IconButton>
-                        </TableCell>
+                        <TableCell align='left'>{firtsLastName}</TableCell>
+                        <TableCell align='left'>{email}</TableCell>
                       </TableRow>
                     );
                   })}

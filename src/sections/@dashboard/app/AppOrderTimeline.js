@@ -4,9 +4,6 @@ import { Card, Typography, CardHeader, CardContent, Divider, Box, Button } from 
 import { Timeline, TimelineDot, TimelineItem, TimelineContent, TimelineSeparator, TimelineConnector } from '@mui/lab';
 import Iconify from '../../../components/iconify';
 
-// utils
-import { fDateTime } from '../../../utils/formatTime';
-
 // ----------------------------------------------------------------------
 
 AppOrderTimeline.propTypes = {
@@ -34,11 +31,6 @@ export default function AppOrderTimeline({ title, subheader, list, ...other }) {
         </Timeline>
       </CardContent>
       <Divider />
-      <Box sx={{ p: 2, textAlign: 'right' }}>
-        <Button size="small" color="inherit" endIcon={<Iconify icon={'eva:arrow-ios-forward-fill'} />}>
-          View all
-        </Button>
-      </Box>
     </Card>
   );
 }
@@ -75,7 +67,7 @@ function OrderItem({ item, isLast }) {
         <Typography variant="subtitle2">{title}</Typography>
 
         <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-          {fDateTime(time)}
+          {time}
         </Typography>
       </TimelineContent>
     </TimelineItem>

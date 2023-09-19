@@ -1,12 +1,24 @@
 import React, { useState } from 'react';
-import { TextField, Stack, IconButton, InputAdornment, FormHelperText } from '@mui/material';
+import { TextField, Stack, IconButton, InputAdornment, Select, MenuItem } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import Iconify from '../../components/iconify';
+
+const ROLES = [
+    {
+        id: 2,
+        name: 'Estudiante',
+    },
+    {
+        id: 1,
+        name: 'Docente',
+    },
+];
 
 export default function RegisterForm({ handleRegister }) {
     const [student, setStudent] = useState({ firstName: '', lastName: '', email: '', password: '' });
     const [errors, setErrors] = useState({});
     const [showPassword, setShowPassword] = useState(false);
+    const [formData, setFormData] = useState(ROLES[0]);
 
     const validate = () => {
         const tempErrors = {};
@@ -27,11 +39,25 @@ export default function RegisterForm({ handleRegister }) {
         if (!validate()) return;
 
         try {
+            student.roleId =
+                formData && typeof formData !== "string" ?
+                    formData.id : formData;
             const result = await handleRegister(student);
-            console.log('Registro exitoso:', result);
+            if (result.statusCode === 200) {
+                setStudent({ firstName: '', lastName: '', email: '', password: '' });
+                setFormData(ROLES[0]);
+            }
         } catch (error) {
             console.error('Error en el registro:', error);
         }
+    };
+
+    const handleSelectChange = (event) => {
+        const { name, value } = event.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
     };
 
     return (
@@ -86,6 +112,24 @@ export default function RegisterForm({ handleRegister }) {
                 error={Boolean(errors.password)}
                 helperText={errors.password}
             />
+            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }} />
+            <Select
+                label="Soy"
+                name="id"
+                value={formData.id
+                    || 'Que desea ser?'}
+                onChange={handleSelectChange}
+                fullWidth
+            >
+                <MenuItem value={0} disabled>
+                    <em>Seleccione su dedicacion</em>
+                </MenuItem>
+                {ROLES.map((role, index) => (
+                    <MenuItem key={index} value={role.id}>
+                        {role.name}
+                    </MenuItem>
+                ))}
+            </Select>
             <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }} />
             <LoadingButton
                 fullWidth

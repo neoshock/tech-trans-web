@@ -59,10 +59,14 @@ export default function RegisterPage() {
         const result = await createUserByStudent(student);
         if (result.statusCode === 200) {
             setTitle('Registro exitoso');
-            setMessage(result.message);
+            setMessage('Usuario registrado exitosamente');
             setOpenSuccessAlert(true);
+        } else if (result.statusCode === 409) {
+            setTitle('Correo electronico ya esta registrado');
+            setMessage(result.message);
+            setIsDialogOpen(true);
         } else {
-            setTitle('Registro fallido');
+            setTitle('Error en el registro');
             setMessage(result.message);
             setIsDialogOpen(true);
         }

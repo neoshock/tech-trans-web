@@ -1,12 +1,15 @@
 import PropTypes from 'prop-types';
+import { useState } from 'react';
+import { Link as RLink } from 'react-router-dom';
+
 // @mui
-import { Box, Card, Link, Typography, Stack } from '@mui/material';
+import { Box, Card, Link, Typography, Stack, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
 // utils
-import { fCurrency } from '../../../utils/formatNumber';
 // components
 import Label from '../../../components/label';
 import { ColorPreview } from '../../../components/color-utils';
+import Iconify from '../../../components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -24,54 +27,140 @@ ShopProductCard.propTypes = {
   product: PropTypes.object,
 };
 
-export default function ShopProductCard({ product }) {
-  const { name, cover, price, colors, status, priceSale } = product;
+async function copyTextToClipboard(text) {
+  if ('clipboard' in navigator) {
+    await navigator.clipboard.writeText(text);
+  }
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  document.body.appendChild(textArea);
+  textArea.select();
+  document.execCommand('copy');
+  document.body.removeChild(textArea);
+  return Promise.resolve();
+}
+
+const CodeClassShareInfo = ({ codeClass, open, handleClose }) => {
+  const [setCodeClassInfo] = useState(codeClass);
+  const [copySuccess, setCopySuccess] = useState(false);
+
+  const handleCopyText = () => {
+    copyTextToClipboard(codeClass)
+      .then(() => {
+        setCopySuccess(true);
+        setTimeout(() => {
+          setCopySuccess(false);
+        }, 1500);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
-    <Card>
-      <Box sx={{ pt: '100%', position: 'relative' }}>
-        {status && (
-          <Label
-            variant="filled"
-            color={(status === 'pendiente' && 'error') || 'info'}
+    <Dialog open={open} onClose={handleClose}
+    >
+      <DialogTitle>Compartir Clase</DialogTitle>
+      <DialogContent>
+        <Typography variant="body2" sx={{ mb: 2 }}>
+          Comparte el código de la clase con tus estudiantes
+        </Typography>
+        <Grid
+          container
+          direction="row"
+          justifyContent="space-arround"
+          alignItems="center"
+        >
+          <Grid>
+            <TextField
+              id='codeClassInfoClipBoard'
+              autoFocus
+              margin="dense"
+              label="Código de la Clase"
+              fullWidth
+              value={codeClass}
+              onChange={(e) => setCodeClassInfo(e.target.value)}
+              disabled
+            />
+          </Grid>
+          <Grid
+            width={3}
+          />
+          <Grid>
+            <IconButton
+              onClick={() => handleCopyText()}
+            >
+              <Iconify icon="eva:copy-outline" width={20} height={20} />
+            </IconButton>
+          </Grid>
+        </Grid>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose} color="primary">
+          Aceptar
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+export default function ShopProductCard({ product }) {
+
+  const [codeClassInfo, setCodeClassInfo] = useState('');
+  const { name, cover, id, completedHours, description, codeClass } = product;
+
+  // show dialog for share class
+  const handleShare = () => {
+    setCodeClassInfo(codeClass);
+  };
+
+  const handleClose = () => {
+    setCodeClassInfo('');
+  }
+
+  return (
+    <>
+      <CodeClassShareInfo codeClass={codeClass} open={Boolean(codeClassInfo)} handleClose={handleClose} />
+      <Card>
+        <Box sx={{ pt: '100%', position: 'relative' }}>
+          <StyledProductImg alt={name} src={cover} />
+          <IconButton
+            onClick={handleShare}
             sx={{
-              zIndex: 9,
-              top: 16,
-              right: 16,
+              top: 8,
+              right: 8,
               position: 'absolute',
-              textTransform: 'uppercase',
+              backgroundColor: 'background.default',
             }}
           >
-            {status}
-          </Label>
-        )}
-        <StyledProductImg alt={name} src={cover} />
-      </Box>
+            <Iconify icon="simple-line-icons:share" width={20} height={20} />
+          </IconButton>
+        </Box>
 
-      <Stack spacing={2} sx={{ p: 3 }}>
-        <Link color="inherit" underline="hover">
-          <Typography variant="subtitle2" noWrap>
-            {name}
-          </Typography>
-        </Link>
+        <Stack spacing={2} sx={{ p: 3 }}>
+          <Link color="inherit" underline="hover"
+            component={RLink}
+            to={`/dashboard/products/detail/${id}`}
+          >
+            <Typography
+              variant="subtitle2"
+              noWrap>
+              {name}
+            </Typography>
+          </Link>
 
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <ColorPreview colors={colors} />
-          <Typography variant="subtitle1">
-            {/* <Typography
-              component="span"
-              variant="body1"
-              sx={{
-                color: 'text.disabled',
-                textDecoration: 'line-through',
-              }}
-            >
-              {priceSale && fCurrency(priceSale)}
-            </Typography> */}
-            Horas Completadas 
+          {/* description */}
+          <Typography variant="body2" noWrap>
+            {description}
           </Typography>
+
+          <Stack direction="row" alignItems="center" justifyContent="space-between">
+            <Typography variant="subtitle1">
+              {completedHours} Horas Completadas
+            </Typography>
+          </Stack>
         </Stack>
-      </Stack>
-    </Card>
+      </Card>
+    </>
   );
 }

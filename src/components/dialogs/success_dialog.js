@@ -36,9 +36,6 @@ export default function SuccessDialog({ title = "Atención", message = "Mensaje 
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText
-                        width={
-                            600
-                        }
                         id="alert-dialog-description">
                         {message}
                     </DialogContentText>

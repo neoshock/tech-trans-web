@@ -39,7 +39,7 @@ export default function LoginForm({ handleLogin }) {
 
   return (
     <>
-      <Stack spacing={3}>
+      <Stack spacing={3} mb={6}>
         <TextField
           name="email"
           label="Dirección de correo electrónico"
@@ -68,14 +68,7 @@ export default function LoginForm({ handleLogin }) {
           }}
         />
       </Stack>
-
-      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-        <Checkbox name="remember" label="Recuérdame" />
-        <Link variant="subtitle2" underline="hover">
-          ¿Olvidaste tu contraseña?
-        </Link>
-      </Stack>
-
+      
       <LoadingButton
         fullWidth
         size="large"
