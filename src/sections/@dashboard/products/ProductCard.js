@@ -105,26 +105,32 @@ const CodeClassShareInfo = ({ codeClass, open, handleClose }) => {
 }
 
 export default function ShopProductCard({ product }) {
-
   const [codeClassInfo, setCodeClassInfo] = useState('');
   const { name, cover, id, completedHours, description, codeClass } = product;
+  const [openShare, setOpenShare] = useState(false);
 
   // show dialog for share class
   const handleShare = () => {
+    setOpenShare(true);
     setCodeClassInfo(codeClass);
   };
 
   const handleClose = () => {
+    setOpenShare(false);
     setCodeClassInfo('');
   }
 
   return (
     <>
-      <CodeClassShareInfo codeClass={codeClass} open={Boolean(codeClassInfo)} handleClose={handleClose} />
+      <CodeClassShareInfo codeClass={codeClass}
+        open={openShare}
+        handleClose={handleClose} />
       <Card>
         <Box sx={{ pt: '100%', position: 'relative' }}>
           <StyledProductImg alt={name} src={cover} />
-          <IconButton
+          {
+            codeClass ? 
+            <IconButton
             onClick={handleShare}
             sx={{
               top: 8,
@@ -134,7 +140,8 @@ export default function ShopProductCard({ product }) {
             }}
           >
             <Iconify icon="simple-line-icons:share" width={20} height={20} />
-          </IconButton>
+          </IconButton> : <></>
+          }
         </Box>
 
         <Stack spacing={2} sx={{ p: 3 }}>
