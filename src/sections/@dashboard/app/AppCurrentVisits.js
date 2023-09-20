@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import ReactApexChart from 'react-apexcharts';
 // @mui
 import { useTheme, styled } from '@mui/material/styles';
-import { Card, CardHeader } from '@mui/material';
+import { Card, CardHeader, Typography } from '@mui/material';
 // utils
 import { fNumber } from '../../../utils/formatNumber';
 // components
@@ -68,7 +68,13 @@ export default function AppCurrentVisits({ title, subheader, chartColors, chartD
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} />
-
+      {
+        chartData.length === 0 ?
+          <Typography paddingLeft={3}>
+            No hay datos por mostrar
+          </Typography> :
+          <></>
+      }
       <StyledChartWrapper dir="ltr">
         <ReactApexChart type="pie" series={chartSeries} options={chartOptions} height={280} />
       </StyledChartWrapper>

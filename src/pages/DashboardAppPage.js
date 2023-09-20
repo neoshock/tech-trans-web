@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { faker } from '@faker-js/faker';
 // @mui
-import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
 // components
 
@@ -20,33 +19,17 @@ import { fetchUserActivity } from '../_mock/user_service';
 
 // ----------------------------------------------------------------------
 import fetchAndPreparePost from '../_mock/blog';
-
-
-// Función para obtener las fechas de los últimos 3 meses
-const getLastThreeMonthsDates = () => {
-  const dates = []; // Utilizar const
-  for (let i = 0; i < 11; i += 1) { // Utilizar += 1 en lugar de ++
-    const date = new Date(); // Utilizar const
-    date.setDate(date.getDate() - i);
-    const formattedDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`; // Utilizar const
-    dates.push(formattedDate);
-  }
-  return dates.reverse(); // Invertir para que las fechas más antiguas aparezcan primero
-};
-
+import { getContentUpload, subjectByStudent, fetchActivityHistory } from '../_mock/dashboard_service';
 
 export default function DashboardAppPage() {
-  const theme = useTheme();
   const [userActivity, setUserActivity] = useState([]);
   const [activityDisplayLimit, setActivityDisplayLimit] = useState(4); // Nuevo estado para limitar las actividades mostradas
   const isUserStudent = localStorage.getItem('role') === 'student';
-
-  const [randomChartDataA, setRandomChartDataA] = useState([]);
-  const [randomChartDataB, setRandomChartDataB] = useState([]);
-  const [randomChartDataC, setRandomChartDataC] = useState([]);
-
-
+  const [content, setContent] = useState([]);
+  const [subjectStudent, setSubjectStudent] = useState([]);
+  const [activityHistory, setActivityHistory] = useState([])
   const [POSTS, setPOSTS] = useState([]); // Estado para los posts
+  const [chartLabels, setChartLabels] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,12 +40,38 @@ export default function DashboardAppPage() {
   }
     , []);
 
-  const chartLabels = getLastThreeMonthsDates(); // Obtener fechas de los últimos 3 meses
+  useEffect(() => {
+    const fetchData = async () => {
+      const contentUploadData = await getContentUpload();
+      setContent(contentUploadData);
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
-    setRandomChartDataA([...Array(11)].map(() => getRandomInt(20, 50)));
-    setRandomChartDataB([...Array(11)].map(() => getRandomInt(40, 80)));
-    setRandomChartDataC([...Array(11)].map(() => getRandomInt(30, 70)));
+    const fetchData = async () => {
+      const subjectStudentData = await subjectByStudent();
+      setSubjectStudent(subjectStudentData);
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const activityHistoryData = await fetchActivityHistory();
+      setActivityHistory(activityHistoryData);
+      setChartLabels(activityHistoryData.map((item) => {
+        // Divide la cadena de fecha en componentes (día, mes, año)
+        const dateComponents = item.date.split('/').map(Number);
+        // Los meses en JavaScript comienzan desde 0, así que resta 1 al mes
+        const jsDate = new Date(dateComponents[2], dateComponents[1] - 1, dateComponents[0]);
+        return jsDate.toLocaleDateString();
+      }));
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const activityData = await fetchUserActivity(2);
@@ -71,16 +80,8 @@ export default function DashboardAppPage() {
         console.error('Ocurrió un error al obtener los datos:', error);
       }
     };
-
-
-
     fetchData();
   }, []);
-
-  const getRandomInt = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  };
-
 
   return (
     <>
@@ -96,27 +97,15 @@ export default function DashboardAppPage() {
         <Grid container spacing={3}>
           <Grid item xs={12} md={6} lg={12}>
             <AppWebsiteVisits
-              title="Mis Clases"
-              subheader="(+43%) Rendimiento academico"
+              title="Historial de actividades"
               chartLabels={chartLabels}
               chartData={[
                 {
                   name: 'Salon A',
-                  type: 'column',
-                  fill: 'solid',
-                  data: randomChartDataA,
-                },
-                {
-                  name: 'Salon B',
                   type: 'area',
                   fill: 'gradient',
-                  data: randomChartDataB,
-                },
-                {
-                  name: 'Salon C',
-                  type: 'line',
-                  fill: 'solid',
-                  data: randomChartDataC,
+                  data:
+                    activityHistory.map((item) => item.countActivityStudents)
                 },
               ]}
             />
@@ -125,18 +114,17 @@ export default function DashboardAppPage() {
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
               title="Mis Temas"
-              chartData={[
-                { label: 'Programacion', value: 4344 },
-                { label: 'Estructura de datos', value: 5435 },
-                { label: 'Arquitectura', value: 1443 },
-                { label: 'Inteligencia de Negocios', value: 4443 },
-              ]}
-              chartColors={[
-                theme.palette.primary.main,
-                theme.palette.info.main,
-                theme.palette.warning.main,
-                theme.palette.error.main,
-              ]}
+              chartData={
+                content.map((item) => ({
+                  label: item.subjectName,
+                  value: item.blogCount,
+                }))
+              }
+              chartColors={
+                content.forEach((e) => {
+                  return faker.internet.color();
+                })
+              }
             />
           </Grid>
 
@@ -144,16 +132,13 @@ export default function DashboardAppPage() {
             !isUserStudent && (
               <Grid item xs={12} md={6} lg={8}>
                 <AppConversionRates
-                  title="Rendimiento por estudiante"
-                  subheader="(+43%) muestra resultados significativos"
-                  chartData={[
-                    { label: 'Manuel', value: 400 },
-                    { label: 'Juan', value: 300 },
-                    { label: 'Pedro', value: 200 },
-                    { label: 'Maria', value: 100 },
-                    { label: 'Luis', value: 90 },
-                    { label: 'Josue', value: 80 },
-                  ]}
+                  title="Cantidad de estudiantes por materia"
+                  chartData={
+                    subjectStudent.map((item) => ({
+                      label: item.subjectName,
+                      value: item.studentsCount,
+                    }))
+                  }
                 />
               </Grid>)
           }
@@ -161,7 +146,7 @@ export default function DashboardAppPage() {
             <AppNewsUpdate
               title="Temas recientes"
               list={POSTS.slice(0, 5).map((post, index) => ({
-                id: index,
+                id: post.id,
                 title: post.title,
                 autor: post.author.name,
                 image: post.cover,

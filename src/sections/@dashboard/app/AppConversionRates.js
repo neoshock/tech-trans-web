@@ -15,6 +15,13 @@ AppConversionRates.propTypes = {
   chartData: PropTypes.array.isRequired,
 };
 
+function limitString(text, limit) {
+  if (text.length > limit) {
+    return `${text.substring(0, limit)}...`;
+  }
+  return text;
+}
+
 export default function AppConversionRates({ title, subheader, chartData, ...other }) {
   const chartLabels = chartData.map((i) => i.label);
 
@@ -34,7 +41,10 @@ export default function AppConversionRates({ title, subheader, chartData, ...oth
       bar: { horizontal: true, barHeight: '28%', borderRadius: 2 },
     },
     xaxis: {
-      categories: chartLabels,
+      categories:
+        chartLabels.length > 0
+          ? chartLabels.map((label) => limitString(label, 10))
+          : ['No hay datos'],
     },
   });
 

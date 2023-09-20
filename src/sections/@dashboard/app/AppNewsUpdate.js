@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link as LinkR } from 'react-router-dom';
 // @mui
 import PropTypes from 'prop-types';
 import { Box, Stack, Link, Card, Button, Divider, Typography, CardHeader } from '@mui/material';
@@ -46,14 +47,17 @@ NewsItem.propTypes = {
 };
 
 function NewsItem({ news }) {
-  const { image, title, autor, postedAt } = news;
+  const { image, title, autor, id } = news;
 
   return (
     <Stack direction="row" alignItems="center" spacing={2}>
       <Box component="img" alt={title} src={image} sx={{ width: 48, height: 48, borderRadius: 1.5, flexShrink: 0 }} />
 
       <Box sx={{ minWidth: 240, flexGrow: 1 }}>
-        <Link color="inherit" variant="subtitle2" underline="hover" noWrap>
+        <Link
+          component={LinkR}
+          to={`/dashboard/blog/detail/${id}`}
+          color="inherit" variant="subtitle2" underline="hover" noWrap>
           {title}
         </Link>
 
