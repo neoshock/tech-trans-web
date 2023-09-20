@@ -69,7 +69,7 @@ export default function DashboardAppPage() {
         const dateComponents = item.date.split('/').map(Number);
         // Los meses en JavaScript comienzan desde 0, así que resta 1 al mes
         const jsDate = new Date(dateComponents[2], dateComponents[1] - 1, dateComponents[0]);
-        return jsDate.toLocaleDateString();
+        return jsDate.toISOString();
       }));
     };
     fetchData();
