@@ -20,6 +20,8 @@ import { fetchUserActivity } from '../_mock/user_service';
 // ----------------------------------------------------------------------
 import fetchAndPreparePost from '../_mock/blog';
 import { getContentUpload, subjectByStudent, fetchActivityHistory } from '../_mock/dashboard_service';
+import { getRole } from '../_mock/auth_service';
+
 
 export default function DashboardAppPage() {
   const [userActivity, setUserActivity] = useState([]);
@@ -30,6 +32,8 @@ export default function DashboardAppPage() {
   const [activityHistory, setActivityHistory] = useState([])
   const [POSTS, setPOSTS] = useState([]); // Estado para los posts
   const [chartLabels, setChartLabels] = useState([]);
+
+  const userRole = getRole();  // Obtener el rol del usuario
 
   useEffect(() => {
     const fetchData = async () => {
@@ -95,22 +99,26 @@ export default function DashboardAppPage() {
         </Typography>
 
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6} lg={12}>
-            <AppWebsiteVisits
-              title="Historial de actividades"
-              chartLabels={chartLabels}
-              chartData={[
-                {
-                  name: 'Salon A',
-                  type: 'area',
-                  fill: 'gradient',
-                  data:
-                    activityHistory.map((item) => item.countActivityStudents)
-                },
-              ]}
-            />
-          </Grid>
 
+          {
+            userRole === 'teacher' ?
+              <Grid item xs={12} md={6} lg={12}>
+                <AppWebsiteVisits
+                  title="Historial de actividades"
+                  chartLabels={chartLabels}
+                  chartData={[
+                    {
+                      name: 'Salon A',
+                      type: 'area',
+                      fill: 'gradient',
+                      data:
+                        activityHistory.map((item) => item.countActivityStudents)
+                    },
+                  ]}
+                />
+              </Grid> :
+              <></>
+          }
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
               title="Mis Temas"

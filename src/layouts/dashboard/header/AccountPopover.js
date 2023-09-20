@@ -37,9 +37,13 @@ export default function AccountPopover() {
   };
 
   const handleClose = () => {
-    authService.logout();
     setOpen(null);
   };
+
+  const logout = async () => {
+    await authService.logout();
+    window.location.reload();
+  }
 
   useEffect(() => {
     // is await
@@ -105,8 +109,9 @@ export default function AccountPopover() {
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <MenuItem onClick={handleClose} sx={{ m: 1 }}
-          component={Link} to="/login">
+        <MenuItem sx={{ m: 1 }}
+          onClick={logout}
+        >
           Cerrar Sesion
         </MenuItem>
       </Popover>
