@@ -125,7 +125,7 @@ export default function RegisterPage() {
                 <Container maxWidth="sm">
                     <StyledContent>
                         <Typography variant="h4" gutterBottom>
-                            Registrarse en Tech Trans
+                            Registrarse en Technify
                         </Typography>
 
                         <Typography variant="body2" sx={{ mb: 5 }}>

@@ -125,7 +125,7 @@ export default function LoginPage() {
         <Container maxWidth="sm">
           <StyledContent>
             <Typography variant="h4" gutterBottom>
-              Iniciar sesión en Tech Trans
+              Iniciar sesión en Technify
             </Typography>
 
             <Typography variant="body2" sx={{ mb: 5 }}>
